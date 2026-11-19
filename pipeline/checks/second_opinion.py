@@ -39,6 +39,118 @@ from ..common import WARN, Issue, iou_xywh, parse_yolo_line  # noqa: F401
 from ..model_cache import get_preds  # noqa: F401
 
 
-def run(ds, cfg, preds=None):
+#def run(ds, cfg, preds=None):
     # TODO
-    raise NotImplementedError("check second_opinion chưa làm")
+    #raise NotImplementedError("check second_opinion chưa làm")
+
+"""CHECK — Ý kiến thứ hai từ yolo26l (dự đoán lưu sẵn). Chỉ CẢNH BÁO, không sửa gì.
+
+Test:  pytest tests/test_second_opinion.py -q
+(Giữ nguyên docstring gốc của stub nếu bạn muốn; phần dưới là code thực thi.)
+"""
+from ..common import WARN, Issue, iou_xywh, parse_yolo_line
+from ..common import WARN, Issue, iou_xywh, parse_yolo_line
+from ..model_cache import get_preds
+
+CHECK_NAME = "second_opinion"
+
+
+def _issue(image, code, message, line=None, extra=None):
+    """Tạo Issue WARN. Chữ ký: Issue(check, severity, code, image, message, line, extra)."""
+    return Issue(CHECK_NAME, WARN, code, image, message, line, extra or {})
+
+
+def _labels_with_lines(ds, stem, num_classes):
+    """Trả list (số_dòng_gốc, lớp, (cx, cy, w, h)) của các dòng nhãn HỢP LỆ.
+    read_label_lines trả tuple, nên tách ra: phần là int = số dòng, phần là str = nội dung."""
+    result = []
+    for pos, item in enumerate(ds.read_label_lines(stem), start=1):
+        line_no, text = pos, item
+        if isinstance(item, (tuple, list)):
+            ints = [x for x in item if isinstance(x, int) and not isinstance(x, bool)]
+            strs = [x for x in item if isinstance(x, str)]
+            if strs:
+                text = strs[0]
+                if ints:
+                    line_no = ints[0]
+        if not text.strip():
+            continue                                    # dòng trống: bỏ qua, số dòng vẫn đúng
+        try:
+            cls_id, cx, cy, w, h = parse_yolo_line(text)
+        except ValueError:
+            continue                                    # dòng hỏng là việc của label_format
+        if 0 <= cls_id < num_classes and w > 0 and h > 0:
+            result.append((line_no, int(cls_id), (cx, cy, w, h)))
+    return result
+
+
+def run(ds, cfg, preds=None):
+    # Không truyền preds (pipeline gọi run(ds, cfg)) thì lấy dự đoán yolo26l đã cache sẵn
+    if preds is None:
+        preds = get_preds(ds, cfg, "checker")
+
+    # --- BƯỚC 0: ngưỡng từ config, không viết cứng ----------------------------
+    so = cfg["second_opinion"]
+    conf_min, min_area_px, fp_conf = so["conf"], so["min_area_px"], so["fp_conf"]
+    iou_missing, iou_match, iou_loose = so["iou_missing"], so["iou_match"], so["iou_loose"]
+
+    num_classes = len(ds.classes)
+    issues = []
+
+    # --- BƯỚC 1: duyệt ảnh theo ds.image_files() ------------------------------
+    for img_path in ds.image_files():
+        stem = img_path.stem
+        if stem not in preds or not ds.label_path(stem).exists():
+            continue                                    # không có dự đoán hoặc chưa có file nhãn
+
+        labels = _labels_with_lines(ds, stem, num_classes)
+        img_w, img_h = ds.image_size(stem)
+        # mỗi dự đoán: [id_lớp, conf, cx, cy, w, h]
+        all_preds = [(int(p[0]), float(p[1]), tuple(p[2:6])) for p in preds[stem]]
+
+        # --- BƯỚC 2: với mỗi dự đoán đủ conf và đủ diện tích --------------------
+        for pred_cls, conf, pbox in all_preds:
+            if conf < conf_min:
+                continue
+            if (pbox[2] * img_w) * (pbox[3] * img_h) < min_area_px:
+                continue
+
+            # cands: nhãn MỌI lớp có IoU >= iou_missing -> (iou, lớp)
+            cands = []
+            for _line, lab_cls, lbox in labels:
+                iou = iou_xywh(pbox, lbox)
+                if iou >= iou_missing:
+                    cands.append((iou, lab_cls))
+
+            if not cands:                               # (1) model thấy, nhãn không có
+                issues.append(_issue(stem, "POSSIBLE_MISSING",
+                                     f"model thấy lớp {pred_cls} (conf {conf:.2f}) nhưng không có nhãn",
+                                     extra={"conf": conf}))
+                continue
+
+            same = [c for c in cands if c[1] == pred_cls]
+            if same:                                    # (2) có nhãn cùng lớp
+                best_iou = max(c[0] for c in same)
+                if best_iou < iou_loose:
+                    issues.append(_issue(stem, "POSSIBLE_LOOSE_BOX",
+                                         f"box lỏng: IoU {best_iou:.2f} < {iou_loose}",
+                                         extra={"conf": conf, "iou": best_iou}))
+                continue                                # IoU đủ tốt: không cờ
+
+            best_iou, best_cls = max(cands)             # (3) chỉ có nhãn khác lớp
+            if best_iou >= iou_match:
+                issues.append(_issue(stem, "POSSIBLE_WRONG_CLASS",
+                                     f"nhãn lớp {best_cls} nhưng model thấy lớp {pred_cls} "
+                                     f"(IoU {best_iou:.2f})",
+                                     extra={"conf": conf, "iou": best_iou}))
+            # còn lại: mơ hồ, không cờ
+
+        # --- BƯỚC 3: FALSE_POS, dùng conf >= fp_conf, KHÔNG lọc diện tích -------
+        support = [box for _c, conf, box in all_preds if conf >= fp_conf]
+        for line_no, lab_cls, lbox in labels:
+            if all(iou_xywh(lbox, pbox) < iou_missing for pbox in support):
+                issues.append(_issue(stem, "POSSIBLE_FALSE_POS",
+                                     f"nhãn lớp {lab_cls} không khớp dự đoán nào (conf >= {fp_conf})",
+                                     line=line_no, extra={"conf": fp_conf}))
+
+    return issues
