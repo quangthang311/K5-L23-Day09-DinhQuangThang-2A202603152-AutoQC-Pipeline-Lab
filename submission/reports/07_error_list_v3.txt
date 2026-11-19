@@ -1,0 +1,42 @@
+# Danh sách lỗi — SAU người duyệt (v3)
+ảnh đã quét: 193
+
+label_format -> 9 dòng
+missing_labels -> 5 dòng
+second_opinion -> 11 dòng
+
+[WARN ] BOX_HUGE             img_0018.txt:1  box chiếm 0.97 diện tích ảnh > 0.95
+[WARN ] BOX_HUGE             img_0128.txt:1  box chiếm 0.99 diện tích ảnh > 0.95
+[WARN ] BOX_HUGE             img_0196.txt:1  box chiếm 0.98 diện tích ảnh > 0.95
+[WARN ] BOX_TINY             img_0026.txt:6  cạnh ngắn 11.4px < 12px
+[WARN ] BOX_TINY             img_0051.txt:5  cạnh ngắn 8.9px < 12px
+[WARN ] BOX_TINY             img_0161.txt:2  cạnh ngắn 10.3px < 12px
+[WARN ] BOX_TINY             img_0161.txt:3  cạnh ngắn 11.4px < 12px
+[WARN ] BOX_TINY             img_0161.txt:4  cạnh ngắn 11.9px < 12px
+[WARN ] BOX_TINY             img_0183.txt:11  cạnh ngắn 11.8px < 12px
+[WARN ] EMPTY_LABEL          img_0097  file nhãn rỗng: ảnh nền hay thiếu nhãn?
+[WARN ] EMPTY_LABEL          img_0129  file nhãn rỗng: ảnh nền hay thiếu nhãn?
+[WARN ] EMPTY_LABEL          img_0147  file nhãn rỗng: ảnh nền hay thiếu nhãn?
+[WARN ] EMPTY_LABEL          img_0184  file nhãn rỗng: ảnh nền hay thiếu nhãn?
+[WARN ] EMPTY_LABEL          img_0192  file nhãn rỗng: ảnh nền hay thiếu nhãn?
+[WARN ] POSSIBLE_FALSE_POS   img_0014.txt:2  nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0022.txt:2  nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0068.txt:8  nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0075.txt:6  nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0091.txt:10  nhãn lớp 2 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0124.txt:8  nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0131.txt:11  nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0191.txt:1  nhãn lớp 0 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_FALSE_POS   img_0212.txt:4  nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1)
+[WARN ] POSSIBLE_MISSING     img_0183  model thấy lớp 1 (conf 0.81) nhưng không có nhãn
+[WARN ] POSSIBLE_WRONG_CLASS img_0078  nhãn lớp 2 nhưng model thấy lớp 0 (IoU 0.92)
+
+## Tổng hợp theo mã
+warn  BOX_HUGE               3
+warn  BOX_TINY               6
+warn  EMPTY_LABEL            5
+warn  POSSIBLE_FALSE_POS     9
+warn  POSSIBLE_MISSING       1
+warn  POSSIBLE_WRONG_CLASS   1
+
+Kết luận: RELEASE — Không còn lỗi bắt buộc; 11/193 ảnh còn cảnh báo (5.70%) < ngưỡng Hold 10%.; Người đã duyệt 80 ảnh; cảnh báo của các ảnh này không tính vào tỉ lệ.

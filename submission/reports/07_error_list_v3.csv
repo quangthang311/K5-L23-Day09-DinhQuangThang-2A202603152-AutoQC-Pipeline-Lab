@@ -1,0 +1,26 @@
+check,severity,code,image,line,message,extra
+missing_labels,warn,EMPTY_LABEL,img_0097,,file nhãn rỗng: ảnh nền hay thiếu nhãn?,
+missing_labels,warn,EMPTY_LABEL,img_0129,,file nhãn rỗng: ảnh nền hay thiếu nhãn?,
+missing_labels,warn,EMPTY_LABEL,img_0147,,file nhãn rỗng: ảnh nền hay thiếu nhãn?,
+missing_labels,warn,EMPTY_LABEL,img_0184,,file nhãn rỗng: ảnh nền hay thiếu nhãn?,
+missing_labels,warn,EMPTY_LABEL,img_0192,,file nhãn rỗng: ảnh nền hay thiếu nhãn?,
+label_format,warn,BOX_HUGE,img_0018,1,box chiếm 0.97 diện tích ảnh > 0.95,
+label_format,warn,BOX_TINY,img_0026,6,cạnh ngắn 11.4px < 12px,
+label_format,warn,BOX_TINY,img_0051,5,cạnh ngắn 8.9px < 12px,
+label_format,warn,BOX_HUGE,img_0128,1,box chiếm 0.99 diện tích ảnh > 0.95,
+label_format,warn,BOX_TINY,img_0161,2,cạnh ngắn 10.3px < 12px,
+label_format,warn,BOX_TINY,img_0161,3,cạnh ngắn 11.4px < 12px,
+label_format,warn,BOX_TINY,img_0161,4,cạnh ngắn 11.9px < 12px,
+label_format,warn,BOX_TINY,img_0183,11,cạnh ngắn 11.8px < 12px,
+label_format,warn,BOX_HUGE,img_0196,1,box chiếm 0.98 diện tích ảnh > 0.95,
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0014,2,nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0022,2,nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0068,8,nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0075,6,nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_WRONG_CLASS,img_0078,,nhãn lớp 2 nhưng model thấy lớp 0 (IoU 0.92),"{""conf"": 0.8287, ""iou"": 0.9189310218686991}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0091,10,nhãn lớp 2 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0124,8,nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0131,11,nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_MISSING,img_0183,,model thấy lớp 1 (conf 0.81) nhưng không có nhãn,"{""conf"": 0.8104}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0191,1,nhãn lớp 0 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"
+second_opinion,warn,POSSIBLE_FALSE_POS,img_0212,4,nhãn lớp 1 không khớp dự đoán nào (conf >= 0.1),"{""conf"": 0.1}"

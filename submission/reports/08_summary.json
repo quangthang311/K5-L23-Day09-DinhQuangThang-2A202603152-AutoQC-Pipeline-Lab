@@ -1,0 +1,19 @@
+{
+  "verdict": {
+    "decision": "Release",
+    "n_errors": 0,
+    "n_warn_images": 11,
+    "n_images": 193,
+    "warn_ratio": 0.057,
+    "reasons": [
+      "Không còn lỗi bắt buộc; 11/193 ảnh còn cảnh báo (5.70%) < ngưỡng Hold 10%.",
+      "Người đã duyệt 80 ảnh; cảnh báo của các ảnh này không tính vào tỉ lệ."
+    ]
+  },
+  "reviewed": 80,
+  "budget": 80,
+  "seconds": 5.7,
+  "exported": "D:\\AI_VIN_UNI\\Lab_9\\K5-L23-Day09-DinhQuangThang-2A202603152-AutoQC-Pipeline-Lab\\submission\\export\\clean_v1",
+  "config_sha1": "246673c698d01a347e75abe9d7f6e2a5592de187",
+  "review_sim_sha1": "7988ca22827f780a7043a2300490e679a1697154"
+}
